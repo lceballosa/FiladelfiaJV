@@ -10,7 +10,7 @@ import com.newid.newid.models.NewidJoven;
 
 public interface NewIdJovenRepository extends JpaRepository<NewidJoven, String> {
 
-    @Query(value= "select * from newid_joven where nombre like %:nombre%", nativeQuery=true)
+    @Query(value= "select * from newid_joven where nombre_completo like %:nombre% " , nativeQuery=true)
     List<NewidJoven> findJoven( @Param("nombre") String nombre);
     
 }

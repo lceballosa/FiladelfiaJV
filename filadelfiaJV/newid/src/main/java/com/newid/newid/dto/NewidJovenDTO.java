@@ -5,7 +5,7 @@ public class NewidJovenDTO {
 
 	private String telefono;
 
-    private String nombre;
+    private String nombreCompleto;
 
     private Date fechaNacimiento;
 
@@ -50,12 +50,12 @@ public class NewidJovenDTO {
         this.telefono = telefono;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombrecompleto() {
+        return nombreCompleto;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
     }
 
     public Date getFechaNacimiento() {

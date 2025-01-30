@@ -15,8 +15,20 @@ public class NewidJoven {
 	@Column(name = "telefono", unique = true, nullable = false)
 	private String telefono;
 
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "nombre_completo")
+    private String nombreCompleto;
+
+    @Column(name = "primer_nombre")
+    private String primerNombre;
+
+    @Column(name = "segundo_nombre")
+    private String segundoNombre;
+
+    @Column(name = "primer_apellido")
+    private String primerApellido;
+
+    @Column(name = "segundo_apellido")
+    private String segundoApellido;
 
     @Column(name = "fecha_nacimiento")
     private Date fechaNacimiento;
