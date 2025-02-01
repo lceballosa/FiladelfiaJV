@@ -1,12 +1,8 @@
 package com.newid.newid.models;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "newid_seguridad")
-@Setter
-@Getter
 public class NewIdMentorGrupoEdad {
 
     @Id
@@ -21,5 +17,31 @@ public class NewIdMentorGrupoEdad {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_grupo_edad")
 	private NewIdGrupoEdad grupoEdad;
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public NewidMentor getMentor() {
+        return this.mentor;
+    }
+
+    public void setMentor(NewidMentor mentor) {
+        this.mentor = mentor;
+    }
+
+    public NewIdGrupoEdad getGrupoEdad() {
+        return this.grupoEdad;
+    }
+
+    public void setGrupoEdad(NewIdGrupoEdad grupoEdad) {
+        this.grupoEdad = grupoEdad;
+    }
+
+    
     
 }

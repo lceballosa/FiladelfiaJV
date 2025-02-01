@@ -23,7 +23,7 @@ public class NewidJovenDTO {
 
     private String abreviaturaMentor;
 
-    private String grupoEdad;
+    private String grupoEdadNombre;
 
     private Long edad;
 
@@ -114,12 +114,12 @@ public class NewidJovenDTO {
         this.genero = genero;
     }
 
-    public String getGrupoEdad() {
-        return grupoEdad;
+    public String getGrupoEdadNombre() {
+        return grupoEdadNombre;
     }
 
-    public void setGrupoEdad(String grupoEdad) {
-        this.grupoEdad = grupoEdad;
+    public void setGrupoEdadNombre(String grupoEdad) {
+        this.grupoEdadNombre = grupoEdad;
     }
 
     public Long getEdad() {

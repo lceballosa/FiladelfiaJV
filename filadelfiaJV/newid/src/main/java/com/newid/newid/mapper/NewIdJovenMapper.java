@@ -12,7 +12,7 @@ public interface NewIdJovenMapper {
     @Mapping(source = "mentor.id", target = "idMentor")
     @Mapping(source = "mentor.abreviatura", target = "abreviaturaMentor")
     @Mapping(source = "grupoEdad.id", target = "idGrupoEdad")
-    @Mapping(source = "grupoEdad.grupoEdad", target = "grupoEdad")
+    @Mapping(source = "grupoEdad.grupoEdadNombre", target = "grupoEdadNombre")
     public NewidJovenDTO jovenToJovenDTO(NewidJoven joven);
     public List<NewidJovenDTO> jovenesToJovenesDTO(List<NewidJoven> jovenes);
 

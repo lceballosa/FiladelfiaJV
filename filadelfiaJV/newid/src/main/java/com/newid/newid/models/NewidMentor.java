@@ -1,15 +1,14 @@
 package com.newid.newid.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "newid_mentor")
-@Setter
-@Getter
 public class NewidMentor {
 
     @Id
@@ -31,6 +30,56 @@ public class NewidMentor {
 
     @Column(name = "abreviatura")
     private String abreviatura;
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Long getEdad() {
+        return this.edad;
+    }
+
+    public void setEdad(Long edad) {
+        this.edad = edad;
+    }
+
+    public Date getFechaNacimiento() {
+        return this.fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getTelefono() {
+        return this.telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getAbreviatura() {
+        return this.abreviatura;
+    }
+
+    public void setAbreviatura(String abreviatura) {
+        this.abreviatura = abreviatura;
+    }
+
+    
 
     
 }
