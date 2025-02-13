@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.newid.newid.dto.BuscarDTO;
 import com.newid.newid.dto.IngresoDTO;
 import com.newid.newid.dto.NewidJovenDTO;
+import com.newid.newid.dto.NewidPadreDTO;
 import com.newid.newid.service.NewIdService;
 
 
@@ -60,7 +61,7 @@ public class NewIdController {
 
     //buscar joven (ver info de asistencias)
     @PostMapping("/buscar")
-    public ResponseEntity<?> ingreso(@RequestBody BuscarDTO buscarDTO){
+    public ResponseEntity<?> buscar(@RequestBody BuscarDTO buscarDTO){
 
         Map<String, Object> answer = new TreeMap<>();
         try {
@@ -91,6 +92,22 @@ public class NewIdController {
 
     }
 
+    //registrar asistencia
+    @GetMapping("/registrarAsistenciaPray/{telefono}")
+    public ResponseEntity<?> registrarAsistenciaPray(@PathVariable ("telefono") String telefono){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.registrarAsistenciaPray(telefono);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
     // registrar joven
     @PostMapping("/registrarJoven")
     public ResponseEntity<?> registrarJoven(@RequestBody NewidJovenDTO newidJovenDTO){
@@ -110,7 +127,54 @@ public class NewIdController {
 
 
     //editar joven
+
+    // registrar joven
+    @PostMapping("/editarJoven")
+    public ResponseEntity<?> editarJoven(@RequestBody NewidJovenDTO newidJovenDTO){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.editarJoven(newidJovenDTO);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
+    //Registrar padre
+    @PostMapping("/registrarPadre")
+    public ResponseEntity<?> registrarPadre(@RequestBody NewidPadreDTO newidPadreDTO){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.registrarPadre(newidPadreDTO);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
+    @GetMapping("/buscarPadre/{telefono}")
+    public ResponseEntity<?> buscarPadre(@PathVariable ("telefono") String telefono){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.buscarPadre(telefono);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
     
-    // eliminar joven
     
 }

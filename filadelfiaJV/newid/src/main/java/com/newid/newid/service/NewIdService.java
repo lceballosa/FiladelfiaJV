@@ -18,17 +18,26 @@ import com.newid.newid.dto.BuscarDTO;
 import com.newid.newid.dto.IngresoDTO;
 import com.newid.newid.dto.NewIdAsistenciaDTO;
 import com.newid.newid.dto.NewidJovenDTO;
+import com.newid.newid.dto.NewidPadreDTO;
+import com.newid.newid.mapper.NewIdContactoMapper;
 import com.newid.newid.mapper.NewIdJovenMapper;
+import com.newid.newid.mapper.NewIdPadreMapper;
 import com.newid.newid.models.NewIdAsistencia;
+import com.newid.newid.models.NewIdAsistenciaPray;
+import com.newid.newid.models.NewIdContacto;
 import com.newid.newid.models.NewIdGrupoEdad;
 import com.newid.newid.models.NewIdSeguimiento;
 import com.newid.newid.models.NewIdSeguridad;
 import com.newid.newid.models.NewidJoven;
 import com.newid.newid.models.NewidMentor;
+import com.newid.newid.models.NewidPadre;
+import com.newid.newid.repository.NewIdAsistenciaPrayRepository;
 import com.newid.newid.repository.NewIdAsistenciaRepository;
+import com.newid.newid.repository.NewIdContactoRepository;
 import com.newid.newid.repository.NewIdGrupoEdadRepository;
 import com.newid.newid.repository.NewIdJovenRepository;
 import com.newid.newid.repository.NewIdMentorRepository;
+import com.newid.newid.repository.NewIdPadreRepository;
 import com.newid.newid.repository.NewIdSeguimientoRepository;
 import com.newid.newid.repository.NewIdSeguiridadRepository;
 
@@ -56,6 +65,21 @@ public class NewIdService {
 
     @Autowired
     NewIdJovenMapper newIdJovenMapper;
+
+    @Autowired
+    NewIdContactoRepository newIdContactoRepository;
+
+    @Autowired
+    NewIdPadreMapper newIdPadreMapper;
+
+    @Autowired
+    NewIdPadreRepository newIdPadreRepository;
+
+    @Autowired
+    NewIdAsistenciaPrayRepository newIdAsistenciaPrayRepository;
+
+    @Autowired
+    NewIdContactoMapper newIdContactoMapper;
 
     public Map<String, Object> getJovenes() {
         Map<String, Object> answer = new TreeMap<>();
@@ -90,10 +114,12 @@ public class NewIdService {
                 NewidJoven newIdJoven = newIdJovenRepository.findById(buscarDTO.getTelefono()).get();
                 NewidJovenDTO newidJovenDTO = newIdJovenMapper.jovenToJovenDTO(newIdJoven);
                 String fecha = newidJovenDTO.getFechaNacimiento().toString().substring(0, 10);
-                System.out.println(fecha);
                 newidJovenDTO.setFechaNacimientoString(fecha);
                 jovenesDTO.add(newidJovenDTO);
                 newidJovenDTO.setAsistencias(asistencias(newIdJoven));
+                if(newIdJoven.getContacto() != null){
+                    newidJovenDTO.setContacto( newIdContactoMapper.toDTO(newIdJoven.getContacto()));
+                }
                 answer.put("exitoso", true);
                 answer.put("data",jovenesDTO);
 
@@ -162,6 +188,23 @@ public class NewIdService {
         return asistencias;
     }
 
+    String nombreCompleto(NewidJovenDTO newidJovenDTO){
+        if(newidJovenDTO.getSegundoNombre() == null){
+            newidJovenDTO.setSegundoNombre("");
+        }
+        String nombreCompleto = newidJovenDTO.getPrimerNombre() + " " + newidJovenDTO.getSegundoNombre() + " " + newidJovenDTO.getPrimerApellido() + " " + newidJovenDTO.getSegundoApellido();
+        return nombreCompleto;
+    }
+
+    String nombreCompletoPadre(NewidPadreDTO newidPadreDTO){
+        if(newidPadreDTO.getSegundoNombre() == null){
+            newidPadreDTO.setSegundoNombre("");
+        }
+        String nombreCompleto = newidPadreDTO.getPrimerNombre() + " " + newidPadreDTO.getSegundoNombre() + " " + newidPadreDTO.getPrimerApellido() + " " + newidPadreDTO.getSegundoApellido();
+        return nombreCompleto;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public Map<String, Object> registrarJoven(NewidJovenDTO newidJovenDTO) {
         Map<String, Object> answer = new TreeMap<>();
 
@@ -173,6 +216,9 @@ public class NewIdService {
         NewidMentor newidMentor = newIdMentorRepository.findByAbreviatura(newidJovenDTO.getAbreviaturaMentor());
 
         NewidJoven newidJoven = newIdJovenMapper.jovenDTOToJoven(newidJovenDTO);
+
+        newidJoven.setNombreCompleto(nombreCompleto(newidJovenDTO));
+        newidJoven.setFechaInscripcion(new Date(System.currentTimeMillis()));
 
         LocalDate currentDate = LocalDate.now();
 
@@ -191,6 +237,15 @@ public class NewIdService {
         newidJoven.setGrupoEdad(newIdGrupoEdad);
         newidJoven.setEdad((long) anios);
 
+        NewIdContacto newIdContacto = new NewIdContacto();
+        newIdContacto.setNombreContacto(newidJovenDTO.getContacto().getNombreContacto());
+        newIdContacto.setTelefonoContacto(newidJovenDTO.getContacto().getTelefonoContacto());
+        newIdContacto.setCorreoContacto(newidJovenDTO.getContacto().getCorreoContacto());
+        newIdContacto.setParentesco(newidJovenDTO.getContacto().getParentesco());
+
+        newIdContacto = newIdContactoRepository.save(newIdContacto);
+        newidJoven.setContacto(newIdContacto);
+
         newIdJovenRepository.save(newidJoven);
 
         answer.put("exitoso", true);
@@ -199,6 +254,137 @@ public class NewIdService {
         return answer;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public Map<String, Object> editarJoven(NewidJovenDTO newidJovenDTO) {
+        
+        Map<String, Object> answer = new TreeMap<>();
+
+        if(newIdJovenRepository.findById(newidJovenDTO.getTelefono()).isPresent()){
+            NewidJoven newidJoven = newIdJovenRepository.findById(newidJovenDTO.getTelefono()).get();
+            newidJoven.setPrimerNombre(newidJovenDTO.getPrimerNombre());
+            newidJoven.setSegundoNombre(newidJovenDTO.getSegundoNombre());
+            newidJoven.setPrimerApellido(newidJovenDTO.getPrimerApellido());
+            newidJoven.setSegundoApellido(newidJovenDTO.getSegundoApellido());
+            newidJoven.setTelefono(newidJovenDTO.getTelefono());
+            newidJoven.setNombreCompleto(nombreCompleto(newidJovenDTO));
+            newidJoven.setFechaNacimiento(newidJovenDTO.getFechaNacimiento());
+            newidJoven.setParqueadero(newidJovenDTO.getParqueadero());
+            newidJoven.setGenero(newidJovenDTO.getGenero());
+
+            LocalDate currentDate = LocalDate.now();
+
+            // Get years old and group
+            Instant instant = newidJoven.getFechaNacimiento().toInstant();
+
+            // Convert Instant to LocalDate using system default time zone
+            
+            LocalDate localdate = LocalDate.ofInstant(instant, ZoneId.systemDefault());
+
+            int anios =  (int) ChronoUnit.YEARS.between(localdate, currentDate);
+            NewIdGrupoEdad newIdGrupoEdad = newIdGrupoEdadRepository.findGroup(anios);
+
+            newidJoven.setTelefono(newidJovenDTO.getTelefono());
+            NewidMentor newidMentor = newIdMentorRepository.findByAbreviatura(newidJovenDTO.getAbreviaturaMentor());
+            newidJoven.setMentor(newidMentor);
+            newidJoven.setGrupoEdad(newIdGrupoEdad);
+            newidJoven.setEdad((long) anios);
+
+            if (newidJoven.getContacto() == null){
+                NewIdContacto newIdContacto = new NewIdContacto();
+                newIdContacto.setNombreContacto(newidJovenDTO.getContacto().getNombreContacto());
+                newIdContacto.setTelefonoContacto(newidJovenDTO.getContacto().getTelefonoContacto());
+                newIdContacto.setCorreoContacto(newidJovenDTO.getContacto().getCorreoContacto());
+                newIdContacto.setParentesco(newidJovenDTO.getContacto().getParentesco());
+
+                newIdContacto = newIdContactoRepository.save(newIdContacto);
+                newidJoven.setContacto(newIdContacto);
+            }
+            newidJoven.getContacto().setNombreContacto(newidJovenDTO.getContacto().getNombreContacto());
+            newidJoven.getContacto().setTelefonoContacto(newidJovenDTO.getContacto().getTelefonoContacto());
+            newidJoven.getContacto().setCorreoContacto(newidJovenDTO.getContacto().getCorreoContacto());
+            newidJoven.getContacto().setParentesco(newidJovenDTO.getContacto().getParentesco());
+
+            newIdContactoRepository.save(newidJoven.getContacto());
+
+            newIdJovenRepository.save(newidJoven);
+
+            answer.put("exitoso", true);
+            answer.put("data", "El joven ha sido editado");
+
+        }else{
+            answer.put("exitoso", false);
+            answer.put("data", "El joven no existe en la base de datos");
+        }
+        return answer;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public Map<String, Object> registrarPadre(NewidPadreDTO newidPadreDTO) {
+        
+        Map<String, Object> answer = new TreeMap<>();
+        NewidPadre  newidPadre = new NewidPadre();
+        if(newIdPadreRepository.findById(newidPadreDTO.getTelefono()).isPresent()){
+            answer.put("exitoso", true);
+            answer.put("data", "El padre ya ha sido registrado anteriormente");
+            return answer;
+        }else{
+            newidPadre = newIdPadreMapper.padreDTOToPadre(newidPadreDTO);
+            newidPadre.setFechaInscripcion(new Date(System.currentTimeMillis()));
+            LocalDate currentDate = LocalDate.now();
+
+            // Get years old and group
+            Instant instant = newidPadreDTO.getFechaNacimiento().toInstant();
+
+            // Convert Instant to LocalDate using system default time zone
+            
+            LocalDate localdate = LocalDate.ofInstant(instant, ZoneId.systemDefault());
+
+            int anios =  (int) ChronoUnit.YEARS.between(localdate, currentDate);
+            newidPadre.setEdad((long) anios);
+            newidPadre.setNombreCompleto(nombreCompletoPadre(newidPadreDTO));
+            newIdPadreRepository.save(newidPadre);
+            answer.put("exitoso", true);
+            answer.put("data", "El padre ha sido registrado");
+            return answer;
+        }
+
+
+    }
+
+    public Map<String, Object> buscarPadre(String telefono) {
+        Map<String, Object> answer = new TreeMap<>();
+        if(newIdPadreRepository.findById(telefono).isPresent()){
+            NewidPadre newidPadre = newIdPadreRepository.findById(telefono).get();
+            NewidPadreDTO newidPadreDTO = newIdPadreMapper.padreToPadreDTO(newidPadre);
+            answer.put("exitoso", true);
+            answer.put("data", newidPadreDTO);
+            return answer;
+        }else{
+            answer.put("exitoso", false);
+            answer.put("data", "El padre no existe en la base de datos");
+            return answer;
+        }
+    }
+
+    public Map<String, Object> registrarAsistenciaPray(String telefono) {
+        NewIdAsistenciaPray newIdAsistencia = new NewIdAsistenciaPray();
+        Map<String, Object> answer = new TreeMap<>();
+
+        if(newIdJovenRepository.findById(telefono).isPresent()){
+            NewidJoven newIdJoven = newIdJovenRepository.findById(telefono).get();
+            newIdAsistencia.setFecha(new Date(System.currentTimeMillis()));   
+            newIdAsistencia.setJoven(newIdJoven); 
+            newIdAsistenciaPrayRepository.save(newIdAsistencia);
+            answer.put("exitoso", true);
+            answer.put("data", "Asistencia ingresada correctamente");
+           
+        }else{
+
+            answer.put("exitoso", false);
+            answer.put("data", "El joven no existe en la base de datos");
+        }
+        return answer;
+    }
 
     
 }

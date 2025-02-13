@@ -1,6 +1,8 @@
 package com.newid.newid.dto;
 import java.util.Date;
 
+import jakarta.persistence.Column;
+
 public class NewidJovenDTO {
 
 	private String telefono;
@@ -28,6 +30,79 @@ public class NewidJovenDTO {
     private Long edad;
 
     private String fechaNacimientoString;
+
+    private String primerNombre;
+
+    private String segundoNombre;
+
+    private String primerApellido;
+
+    private String segundoApellido;
+
+    private Date fechaInscripcion;
+
+    private NewIdContactoDTO contacto;
+
+
+    public NewIdContactoDTO getContacto() {
+        return this.contacto;
+    }
+
+    public void setContacto(NewIdContactoDTO contacto) {
+        this.contacto = contacto;
+    }
+
+    public Date getFechaInscripcion() {
+        return this.fechaInscripcion;
+    }
+
+    public void setFechaInscripcion(Date fechaInscripcion) {
+        this.fechaInscripcion = fechaInscripcion;
+    }
+
+    public String getPrimerNombre() {
+        return primerNombre;
+    }
+
+    public String getNombreCompleto() {
+        return this.nombreCompleto;
+    }
+
+
+    public Boolean isParqueadero() {
+        return this.parqueadero;
+    }
+
+    public Boolean isTieneMentor() {
+        return this.tieneMentor;
+    }
+    public void setPrimerNombre(String primerNombre) {
+        this.primerNombre = primerNombre;
+    }
+
+    public String getSegundoNombre() {
+        return this.segundoNombre;
+    }
+
+    public void setSegundoNombre(String segundoNombre) {
+        this.segundoNombre = segundoNombre;
+    }
+
+    public String getPrimerApellido() {
+        return this.primerApellido;
+    }
+
+    public void setPrimerApellido(String primerApellido) {
+        this.primerApellido = primerApellido;
+    }
+
+    public String getSegundoApellido() {
+        return this.segundoApellido;
+    }
+
+    public void setSegundoApellido(String segundoApellido) {
+        this.segundoApellido = segundoApellido;
+    }
 
     
 

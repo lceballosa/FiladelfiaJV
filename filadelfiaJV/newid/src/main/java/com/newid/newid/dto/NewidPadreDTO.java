@@ -1,63 +1,72 @@
-package com.newid.newid.models;
+package com.newid.newid.dto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "newid_joven")
-public class NewidJoven {
-
-    @Id
-	@Column(name = "telefono", unique = true, nullable = false)
+public class NewidPadreDTO {
 	private String telefono;
 
-    @Column(name = "nombre_completo")
     private String nombreCompleto;
 
-    @Column(name = "primer_nombre")
     private String primerNombre;
 
-    @Column(name = "segundo_nombre")
     private String segundoNombre;
 
-    @Column(name = "primer_apellido")
     private String primerApellido;
 
-    @Column(name = "segundo_apellido")
     private String segundoApellido;
 
-    @Column(name = "fecha_nacimiento")
     private Date fechaNacimiento;
 
-    @Column(name = "parqueadero")
     private Boolean parqueadero;
 
-    @Column(name = "mentor")
-    private Boolean tieneMentor;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_mentor")
-	private NewidMentor mentor;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_grupo_edad",nullable = false)
-	private NewIdGrupoEdad grupoEdad;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_contacto")
-	private NewIdContacto contacto;
-
-    @Column(name = "genero")
     private String genero;
 
-    @Column(name = "edad")
     private Long edad;
 
-    @Column(name = "fecha_inscripcion")
     private Date fechaInscripcion;
 
+    private String tipoDocumento;
+
+    private String numeroDocumento;
+
+    private String cantidadHijos;
+
+    private String nombresHijos;
+
+
+
+    public String getTipoDocumento() {
+        return this.tipoDocumento;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public String getNumeroDocumento() {
+        return this.numeroDocumento;
+    }
+
+    public void setNumeroDocumento(String numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
+    }
+
+    public String getCantidadHijos() {
+        return this.cantidadHijos;
+    }
+
+    public void setCantidadHijos(String cantidadHijos) {
+        this.cantidadHijos = cantidadHijos;
+    }
+
+    public String getNombresHijos() {
+        return this.nombresHijos;
+    }
+
+    public void setNombresHijos(String nombresHijos) {
+        this.nombresHijos = nombresHijos;
+    }
 
     public Date getFechaInscripcion() {
         return this.fechaInscripcion;
@@ -137,34 +146,6 @@ public class NewidJoven {
         this.parqueadero = parqueadero;
     }
 
-    public Boolean isTieneMentor() {
-        return this.tieneMentor;
-    }
-
-    public Boolean getTieneMentor() {
-        return this.tieneMentor;
-    }
-
-    public void setTieneMentor(Boolean tieneMentor) {
-        this.tieneMentor = tieneMentor;
-    }
-
-    public NewidMentor getMentor() {
-        return this.mentor;
-    }
-
-    public void setMentor(NewidMentor mentor) {
-        this.mentor = mentor;
-    }
-
-    public NewIdGrupoEdad getGrupoEdad() {
-        return this.grupoEdad;
-    }
-
-    public void setGrupoEdad(NewIdGrupoEdad grupoEdad) {
-        this.grupoEdad = grupoEdad;
-    }
-
     public String getGenero() {
         return this.genero;
     }
@@ -179,14 +160,6 @@ public class NewidJoven {
 
     public void setEdad(Long edad) {
         this.edad = edad;
-    }
-
-    public NewIdContacto getContacto() {
-        return this.contacto;
-    }
-
-    public void setContacto(NewIdContacto contacto) {
-        this.contacto = contacto;
     }
 
 
