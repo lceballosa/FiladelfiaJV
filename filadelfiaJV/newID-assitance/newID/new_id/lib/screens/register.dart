@@ -17,98 +17,25 @@ class Register extends StatefulWidget {
 class RegisterState extends State<Register> {
 
   final _formKey = GlobalKey<FormState>();
-  bool _showClearIconFristName = false;
-  bool _showClearIconNumDoc = false;
-  bool _showClearIconSecondName = false;
-  bool _showClearIconFristLastname = false;
-  bool _showClearIconSecondLastname = false;
-  bool _showClearIconCel = false;
-  bool _showClearIconDate = false;
   bool _quiereMentorBool = false;
   bool _necesitaParqueaderoBool = false;
 
   Map<String, Object> registroFrom = Map();
+  Map<String, Object> contacto = Map();
   final HttpService httpService = HttpService();
 
-  void _clearTextFristName() {
-      setState(() {
-        _primerNombreController.clear();
-        _showClearIconFristName = false;
-      });
-  }
-  void _clearTextSecondName() {
-      setState(() {
-        _segundoNombreController.clear();
-        _showClearIconSecondName = false;
-      });
-  }
-  void _clearTextFristLastName() {
-      setState(() {
-        _primerApellidoController.clear();
-        _showClearIconFristLastname = false;
-      });
-  }
-  void _clearTextSecondLastName() {
-      setState(() {
-        _segundoApellidoController.clear();
-        _showClearIconSecondLastname = false;
-      });
-  }
-
-  void _clearTextCel() {
-      setState(() {
-        _celularController.clear();
-        _showClearIconCel = false;
-      });
-  }
-
-  void _clearTextDate() {
-      setState(() {
-        _fechaNacimientoController.clear();
-        _showClearIconDate = false;
-      });
-  }
+  
 
   @override
   void initState() {
     super.initState();
-    _primerNombreController.addListener(() {
-      setState(() {
-        _showClearIconFristName = _primerNombreController.text.isNotEmpty;
-      });
-    });
-
-    _segundoNombreController.addListener(() {
-      setState(() {
-        _showClearIconSecondName = _segundoNombreController.text.isNotEmpty;
-      });
-    });
-    _primerApellidoController.addListener(() {
-      setState(() {
-        _showClearIconFristLastname = _primerApellidoController.text.isNotEmpty;
-      });
-    });
-    _segundoApellidoController.addListener(() {
-      setState(() {
-        _showClearIconSecondLastname = _segundoApellidoController.text.isNotEmpty;
-      });
-    });
-    _celularController.addListener(() {
-      setState(() {
-        _showClearIconCel = _celularController.text.isNotEmpty;
-      });
-    });
-    _fechaNacimientoController.addListener(() {
-      setState(() {
-        _showClearIconDate = _fechaNacimientoController.text.isNotEmpty;
-      });
-    });
   }
 
   String _selectedValueGender = 'Selecciona';
   String _selectedValueMentor = 'Selecciona';
   String _selectedValueParqueadero = 'Selecciona';
   String _selectedValueQuiereMentor = 'Selecciona';
+
 
 
   final TextEditingController _genderController = TextEditingController();
@@ -121,6 +48,10 @@ class RegisterState extends State<Register> {
   final TextEditingController _segundoApellidoController = TextEditingController();  
   final TextEditingController _celularController = TextEditingController();
   final TextEditingController _fechaNacimientoController = TextEditingController();
+  final TextEditingController _contactoNombreController = TextEditingController();
+  final TextEditingController _contactoTelefonoController = TextEditingController();
+  final TextEditingController _contactoCorreoController = TextEditingController();
+  final TextEditingController _contactoParentescoController = TextEditingController();
 
 
   final List<String> _dropdownItemsGender = [
@@ -137,14 +68,11 @@ class RegisterState extends State<Register> {
     'Andrea R',
     'Briggite',
     'Dani M',
-    'Dani O',
-    'Diana M',
     'Diana V',
     'Jose',
     'Juan S',
     'Juanes',
     'Kathryn',
-    'Laura',
     'Lorena',
     'Mercy',
     'Nelson',
@@ -212,23 +140,41 @@ class RegisterState extends State<Register> {
        registroFrom.addEntries({'tieneMentor': _quiereMentorBool}.entries);
        registroFrom.addEntries({'genero': _genderController.text}.entries);
        registroFrom.addEntries({'abreviaturaMentor': _mentorController.text}.entries);
+       registroFrom.addEntries({
+        'contacto': {
+          'nombreContacto': _contactoNombreController.text,
+          'telefonoContacto': _contactoTelefonoController.text,
+          'correoContacto': _contactoCorreoController.text,
+          'parentesco': _contactoParentescoController.text,
+        }
+      }.entries);
 
       final Response response = await httpService.registroJoven(registroFrom);
       if(response.exitoso){
-        _celularController.clear();
-        _primerNombreController.clear();
-        _segundoNombreController.clear();
-        _primerApellidoController.clear();
-        _segundoApellidoController.clear();
-        _fechaNacimientoController.clear();
-        _parkingController.clear();
-        _quiereMentorController.clear();
-        _genderController.clear();
-        _mentorController.clear();
-        _selectedValueGender = 'Selecciona';
-        _selectedValueMentor = 'Selecciona';
-        _selectedValueParqueadero = 'Selecciona';
-        _selectedValueQuiereMentor = 'Selecciona';
+
+        setState(() {
+          registroFrom.clear();
+          contacto.clear();
+           _celularController.clear();
+          _primerNombreController.clear();
+          _segundoNombreController.clear();
+          _primerApellidoController.clear();
+          _segundoApellidoController.clear();
+          _fechaNacimientoController.clear();
+          _parkingController.clear();
+          _quiereMentorController.clear();
+          _genderController.clear();
+          _mentorController.clear();
+          _contactoCorreoController.clear();
+          _contactoNombreController.clear();
+          _contactoParentescoController.clear();
+          _contactoTelefonoController.clear();
+          _selectedValueGender = 'Selecciona';
+          _selectedValueMentor = 'Selecciona';
+          _selectedValueParqueadero = 'Selecciona';
+          _selectedValueQuiereMentor = 'Selecciona';
+        });
+       
 
         showModalBottomSheet<void>(
           context: context,
@@ -355,9 +301,10 @@ class RegisterState extends State<Register> {
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                  _register(); // Call the register function if confirmed
+                onPressed: () async {
+                  Navigator.of(context).pop(); // Cierra el diálogo
+                  await Future.delayed(const Duration(milliseconds: 300)); // Pequeña pausa para evitar bloqueos
+                  _register(); // Llama a la función de registro
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.green,
@@ -422,11 +369,58 @@ class RegisterState extends State<Register> {
           );
         },
       );
-
     }
-
-    
   }
+
+  Widget _buildTextField(String hintText, TextEditingController controller, 
+    {bool isNumeric = false, bool isRequired = true}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 10),
+    child: TextFormField(
+      controller: controller,
+      keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+      validator: (value) {
+        if (isRequired && (value == null || value.isEmpty)) {
+          return 'Ingresa un valor';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: hintText,
+        suffixIcon: controller.text.isNotEmpty
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () => setState(() => controller.clear()),
+              )
+            : null,
+      ),
+    ),
+  );
+}
+
+
+  Widget _buildDropdown(String label, String? selectedValue, 
+    List<String> items, TextEditingController controller, Function(String?) onChanged) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 10),
+    child: DropdownButtonFormField<String>(
+      decoration: InputDecoration(labelText: label),
+      value: selectedValue,
+      validator: (value) => value == null || value.isEmpty ? 'Selecciona un valor' : null,
+      onChanged: (newValue) {
+        if (newValue != null) {
+          setState(() {
+            controller.text = newValue; // Actualiza el controlador
+            onChanged(newValue);
+          });
+        }
+      },
+      items: items.map((String value) => 
+        DropdownMenuItem(value: value, child: Text(value))).toList(),
+    ),
+  );
+}
+
 
 
   @override
@@ -448,272 +442,49 @@ class RegisterState extends State<Register> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset('assets/edit.png', height: 200, width: 150),
+                _buildTextField("Primer nombre*", _primerNombreController),
+                _buildTextField("Segundo nombre", _segundoNombreController, isRequired: false),
+                _buildTextField("Primer apellido*", _primerApellidoController),
+                _buildTextField("Segundo apellido*", _segundoApellidoController),
+                _buildTextField("Celular*", _celularController, isNumeric: true),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: TextFormField(
-                                validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Ingresa un valor';
-                                        }
-                                        return null;
-                                },
-                                controller: _primerNombreController,
-                                decoration: InputDecoration(
-                                  hintText: "Primer nombre*",
-                                  suffixIcon: _showClearIconFristName
-                                      ? IconButton(
-                                          icon: const Icon(Icons.clear),
-                                          onPressed: _clearTextFristName,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: TextFormField(
-                                validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Ingresa un valor';
-                                        }
-                                        return null;
-                                },
-                                controller: _segundoNombreController,
-                                decoration: InputDecoration(
-                                  hintText: "Segundo nombre",
-                                  suffixIcon: _showClearIconSecondName
-                                      ? IconButton(
-                                          icon: const Icon(Icons.clear),
-                                          onPressed: _clearTextSecondName,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: TextFormField(
-                                validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Ingresa un valor';
-                                        }
-                                        return null;
-                                },
-                                controller: _primerApellidoController,
-                                decoration: InputDecoration(
-                                  hintText: "Primer apellido*",
-                                  suffixIcon: _showClearIconFristLastname
-                                      ? IconButton(
-                                          icon: const Icon(Icons.clear),
-                                          onPressed: _clearTextFristLastName,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: TextFormField(
-                                validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Ingresa un valor';
-                                        }
-                                        return null;
-                                },
-                                controller: _segundoApellidoController,
-                                decoration: InputDecoration(
-                                  hintText: "Segundo apellido*",
-                                  suffixIcon: _showClearIconSecondLastname
-                                      ? IconButton(
-                                          icon: const Icon(Icons.clear),
-                                          onPressed: _clearTextSecondLastName,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Ingresa un valor';
-                                        }
-                                        return null;
-                                },
-                                controller: _celularController,
-                                decoration: InputDecoration(
-                                  hintText: "Celular*",
-                                  suffixIcon: _showClearIconCel
-                                      ? IconButton(
-                                          icon: const Icon(Icons.clear),
-                                          onPressed: _clearTextCel,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: InkWell(
-                    onTap: () => _selectDate(context),
-                    child: IgnorePointer(
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Ingresa un valor';
-                          }
-                          return null;
-                        },
-                        controller: _fechaNacimientoController,
-                        decoration: InputDecoration(
-                          hintText: "Fecha de nacimiento*",
-                          suffixIcon: _showClearIconDate
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear),
-                                  onPressed: _clearTextDate,
-                                )
-                              : null,
+                    padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
+                    child: InkWell(
+                      onTap: () => _selectDate(context),
+                      child: IgnorePointer(
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ingresa un valor';
+                            }
+                            return null;
+                          },
+                          controller: _fechaNacimientoController,
+                          decoration: InputDecoration(
+                            hintText: "Fecha de nacimiento*",
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.calendar_today),
+                              onPressed: () => _selectDate(context),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
+                _buildDropdown("¿Requiere parqueadero?*", _selectedValueParqueadero, _dropdownItemsParqueadero, _parkingController, (value) => setState(() => _selectedValueParqueadero = value!)),
+                _buildDropdown("¿Desea mentor?*", _selectedValueQuiereMentor, _dropdownItemsQuiereMentor, _quiereMentorController, (value) => setState(() => _selectedValueQuiereMentor = value!)),
+                _buildDropdown("Sexo*", _selectedValueGender, _dropdownItemsGender,_genderController, (value) => setState(() => _selectedValueGender = value!)),
+                _buildDropdown("Mentor*", _selectedValueMentor, _dropdownItemsMentor, _mentorController, (value) => setState(() => _selectedValueMentor = value!)),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
+                  child: Text("Datos de Contacto", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
+                _buildTextField("Nombre de contacto*", _contactoNombreController),
+                _buildTextField("Teléfono de contacto*", _contactoTelefonoController, isNumeric: true),
+                _buildTextField("Correo de contacto*", _contactoCorreoController),
+                _buildTextField("Parentesco*", _contactoParentescoController),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            labelText: '¿Requiere parqueadero?',
-                          ),
-                           validator: (value){
-                            if(value == null || value.isEmpty || value.toString() == 'Selecciona'){
-                              return 'Selecciona un valor';
-                            }else{
-                              return null;
-                            }
-                          },
-                          value: _selectedValueParqueadero,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedValueParqueadero = newValue!;
-                              _parkingController.text = _selectedValueParqueadero; // Update the TextFormField
-                            });
-                          },
-                          items: _dropdownItemsParqueadero.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            labelText: '¿Desea mentor?',
-                          ),
-                           validator: (value){
-                            if(value == null || value.isEmpty || value.toString() == 'Selecciona'){
-                              return 'Selecciona un valor';
-                            }else{
-                              return null;
-                            }
-                          },
-                          value: _selectedValueQuiereMentor,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedValueQuiereMentor = newValue!;
-                              _quiereMentorController.text = _selectedValueQuiereMentor; // Update the TextFormField
-                            });
-                          },
-                          items: _dropdownItemsQuiereMentor.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            labelText: 'Sexo*',
-                          ),
-                          validator: (value){
-                            if(value == null || value.isEmpty || value.toString() == 'Selecciona'){
-                              return 'Selecciona un valor';
-                            }else{
-                              return null;
-                            }
-                          },
-                          value: _selectedValueGender,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedValueGender = newValue!;
-                              _genderController.text = _selectedValueGender; // Update the TextFormField
-                            });
-                          },
-                          items: _dropdownItemsGender.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            labelText: 'Mentor*',
-                          ),
-                           validator: (value){
-                            if(value == null || value.isEmpty || value.toString() == 'Selecciona'){
-                              return 'Selecciona un valor';
-                            }else{
-                              return null;
-                            }
-                          },
-                          value: _selectedValueMentor,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedValueMentor = newValue!;
-                              _mentorController.text = _selectedValueMentor; // Update the TextFormField
-                            });
-                          },
-                          items: _dropdownItemsMentor.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(80, 20, 80, 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 20),
                   child: ElevatedButton(
                     onPressed: () async {
                       _showConfirmationDialog(context);

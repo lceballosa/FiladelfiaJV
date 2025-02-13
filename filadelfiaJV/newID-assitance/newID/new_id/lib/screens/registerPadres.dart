@@ -350,12 +350,6 @@ class RegisterState extends State<RegisterPadres> {
                 Padding(
                   padding: EdgeInsets.fromLTRB(80, 20, 80, 30),
                   child: TextFormField(
-                                validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Ingresa un valor';
-                                        }
-                                        return null;
-                                },
                                 controller: _segundoNombreController,
                                 decoration: InputDecoration(
                                   hintText: "Segundo nombre",

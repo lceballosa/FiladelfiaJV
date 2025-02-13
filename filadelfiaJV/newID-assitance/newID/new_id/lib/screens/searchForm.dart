@@ -100,7 +100,6 @@ final HttpService httpService = HttpService();
                           const SnackBar(content: Text("Buscando...")),
                         );
                         Search search = new Search(telefono: _celularController.text, nombre: null);
-                        print(search.toJson());
                         final JovenData? jovenData = await httpService.buscarJoven(search);
                         if(jovenData!= null){
                           if(jovenData.data.isNotEmpty){

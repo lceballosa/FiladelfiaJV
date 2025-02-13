@@ -20,12 +20,7 @@ class HttpService {
     return Ingreso(exitoso: false);
   }
 
-   Future<Response> registroAsistencia(String telefono) async {
-
-
-    Map<String, String> queryParams = {
-    'telefono': telefono,
-    };
+  Future<Response> registroAsistencia(String telefono) async {
     Uri url = Uri.parse(baseURL+'/registrarAsistencia/'+telefono);
 
     http.Response response = await http.get(url, headers: httpHeaders);
@@ -35,6 +30,29 @@ class HttpService {
     }
     return Response(exitoso: false, data:"Error en el servicio");
   }
+
+  Future<Response> registroAsistenciaPray(String telefono) async {
+    Uri url = Uri.parse(baseURL+'/registrarAsistenciaPray/'+telefono);
+
+    http.Response response = await http.get(url, headers: httpHeaders);
+    if (response.statusCode == 200) {
+      Response ans = Response.fromJson(json.decode(response.body));
+      return ans;
+    }
+    return Response(exitoso: false, data:"Error en el servicio");
+  }
+
+  Future<Response> buscarPadre(String telefono) async {
+    Uri url = Uri.parse(baseURL+'/buscarPadre/'+telefono);
+
+    http.Response response = await http.get(url, headers: httpHeaders);
+    if (response.statusCode == 200) {
+      Response ans = Response.fromJson(json.decode(response.body));
+      return ans;
+    }
+    return Response(exitoso: false, data:"Error en el servicio");
+  }
+
 
   Future<Response> registroJoven(Map<String, Object> registro) async {
     
@@ -76,27 +94,27 @@ class HttpService {
   final url = Uri.parse('$baseURL/buscar');
   final body = json.encode(search.toJson()); // Ensure search is properly encoded
 
-  try {
-    final response = await http.post(url, headers: httpHeaders, body: body);
+    try {
+      final response = await http.post(url, headers: httpHeaders, body: body);
 
-    if (response.statusCode == 200) {
-      // Decode response body as UTF-8 to handle special characters
-      final decodedResponse = utf8.decode(response.bodyBytes);
-      final jsonResponse = json.decode(decodedResponse);
-      
-      // Check if the response contains valid JSON data and convert it
-      if (jsonResponse != null) {
-        return JovenData.fromJson(jsonResponse);
+      if (response.statusCode == 200) {
+        // Decode response body as UTF-8 to handle special characters
+        final decodedResponse = utf8.decode(response.bodyBytes);
+        final jsonResponse = json.decode(decodedResponse);
+        
+        // Check if the response contains valid JSON data and convert it
+        if (jsonResponse != null) {
+          return JovenData.fromJson(jsonResponse);
+        }
+      } else {
+        // Handle non-200 responses here (e.g., logging or throwing an exception)
+        print('Request failed with status: ${response.statusCode}');
       }
-    } else {
-      // Handle non-200 responses here (e.g., logging or throwing an exception)
-      print('Request failed with status: ${response.statusCode}');
+    } catch (e) {
+      // Handle any exceptions (e.g., network issues, JSON parsing errors)
+      print('An error occurred: $e');
     }
-  } catch (e) {
-    // Handle any exceptions (e.g., network issues, JSON parsing errors)
-    print('An error occurred: $e');
-  }
 
   return null;
-}
+  }
 }

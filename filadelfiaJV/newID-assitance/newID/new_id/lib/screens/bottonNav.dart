@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:new_id/screens/attendance.dart';
+import 'package:new_id/screens/attendancePray.dart';
 import 'package:new_id/screens/home.dart';
 import 'package:new_id/screens/parents.dart';
 import 'package:new_id/screens/register.dart';
@@ -32,9 +33,7 @@ class BottonnavState extends State<Bottonnav> {
     Register(),
     SearchForm(),
     Parents(),
-    Text(
-      'Pray'
-    ),
+    AttendancePray(),
     //home(),
 ];
 

@@ -122,13 +122,35 @@ class _TeenagerdataState extends State<Teenagerdata> {
                             const SizedBox(height: 8),
                             _buildDetailRow('Celular:', person.telefono),
                             _buildDetailRow('Edad:', person.edad.toString() ?? 'Sin datos'),
-                            _buildDetailRow('Grupo edad:', person.grupoEdad.toString() ?? 'Sin datos'),
+                            _buildDetailRow('Grupo edad:', person.grupoEdadNombre.toString() ?? 'Sin datos'),
                             _buildDetailRow('Mentor:', person.abreviaturaMentor ?? 'Sin datos'),
                             _buildDetailRow('Fecha de nacimiento:', person.fechaNacimientoString ?? 'Sin datos'),
                             _buildDetailRow('Requiere parqueadero:', person.parqueadero == true ? 'Sí' : 'No'),
                             _buildDetailRow('Asistencias:', person.asistencias.toString()),
                             _buildDetailRow('Sexo:', person.genero),
                             const SizedBox(height: 10),
+                            // Sección de Información de Contacto
+                            ExpansionTile(
+                              title: const Text(
+                                "Información de Contacto",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      _buildDetailRow('Nombre:', person.contacto?.nombreContacto ?? 'No hay datos'),
+                                      _buildDetailRow('Correo:', person.contacto?.correoContacto ?? 'No hay datos'),
+                                      _buildDetailRow('Teléfono Alternativo:', person.contacto?.telefonoContacto ?? 'No hay datos'),
+                                      _buildDetailRow('Parentesco:', person.contacto?.parentesco ?? 'No hay datos'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+
                             Align(
                               alignment: Alignment.centerRight,
                               child: IconButton(

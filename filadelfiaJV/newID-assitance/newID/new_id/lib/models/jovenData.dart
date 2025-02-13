@@ -1,5 +1,4 @@
 class JovenData {
-
   final List<UserData> data;
   final bool exitoso;
 
@@ -37,11 +36,11 @@ class UserData {
   final int asistencias;
   final String genero;
   final String? abreviaturaMentor;
-  final String? grupoEdad;
+  final String? grupoEdadNombre;
   final int? edad;
   final String? fechaNacimientoString;
   final String? nombreCompleto;
-  //final String profilePictureUrl = "";
+  final Contacto? contacto;
 
   UserData({
     required this.telefono,
@@ -59,9 +58,9 @@ class UserData {
     required this.genero,
     this.abreviaturaMentor,
     this.edad,
-    this.grupoEdad,
+    this.grupoEdadNombre,
     this.fechaNacimientoString,
-    //required this.profilePictureUrl
+    this.contacto,
   });
 
   factory UserData.fromJson(Map<String, dynamic> json) {
@@ -80,10 +79,10 @@ class UserData {
       genero: json['genero'],
       abreviaturaMentor: json['abreviaturaMentor'],
       edad: json['edad'],
-      grupoEdad: json['grupoEdad'],
+      grupoEdadNombre: json['grupoEdadNombre'],
       nombreCompleto: json['nombreCompleto'],
-      fechaNacimientoString: json['fechaNacimientoString']
-      //profilePictureUrl: json['profilePictureUrl']
+      fechaNacimientoString: json['fechaNacimientoString'],
+      contacto: json['contacto'] != null ? Contacto.fromJson(json['contacto']) : null,
     );
   }
 
@@ -92,20 +91,52 @@ class UserData {
       'telefono': telefono,
       'primerNombre': primerNombre,
       'segundoNombre': segundoNombre,
-      'primerApellido':primerApellido,
+      'primerApellido': primerApellido,
       'segundoApellido': segundoApellido,
       'fechaNacimiento': fechaNacimiento,
       'parqueadero': parqueadero,
-      
       'tieneMentor': tieneMentor,
       'idMentor': idMentor,
       'idGrupoEdad': idGrupoEdad,
       'asistencias': asistencias,
       'genero': genero,
       'abreviaturaMentor': abreviaturaMentor,
-      'edad':edad,
-      'grupoEdad':grupoEdad,
+      'edad': edad,
+      'grupoEdad': grupoEdadNombre,
       'fechaNacimientoString': fechaNacimientoString,
+      'contacto': contacto?.toJson(),
+    };
+  }
+}
+
+class Contacto {
+  final String? nombreContacto;
+  final String? telefonoContacto;
+  final String? correoContacto;
+  final String? parentesco;
+
+  Contacto({
+    this.nombreContacto,
+    this.telefonoContacto,
+    this.correoContacto,
+    this.parentesco,
+  });
+
+  factory Contacto.fromJson(Map<String, dynamic> json) {
+    return Contacto(
+      nombreContacto: json['nombreContacto'],
+      telefonoContacto: json['telefonoContacto'],
+      correoContacto: json['correoContacto'],
+      parentesco: json['parentesco'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nombreContacto': nombreContacto,
+      'telefonoContacto': telefonoContacto,
+      'correoContacto': correoContacto,
+      'parentesco': parentesco,
     };
   }
 }

@@ -1,20 +1,14 @@
 class Search {
+  final String? telefono;
+  final String? nombre;
 
-  late String? telefono;
-  late String? nombre;
+  Search({this.telefono, this.nombre});
 
-
-
-  Search(
-      { this.telefono,
-       this.nombre
-      })
-      : super();
-
-  Search.fromJson(dynamic json) {
-    telefono = json['telefono'];
-    nombre = json['nombre'];
-    
+  factory Search.fromJson(Map<String, dynamic> json) {
+    return Search(
+      telefono: json['telefono'] != null ? json['telefono'].toString() : null,
+      nombre: json['nombre'] != null ? json['nombre'] as String : null,
+    );
   }
 
   Map<String, dynamic> toJson() {

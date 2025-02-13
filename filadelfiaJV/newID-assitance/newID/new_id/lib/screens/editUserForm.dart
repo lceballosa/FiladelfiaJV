@@ -32,9 +32,12 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController _parkingController;
   late TextEditingController _quiereMentorController = TextEditingController();
   late TextEditingController _mentorController = TextEditingController();
+  late TextEditingController _contactoNombreController = TextEditingController();
+  late TextEditingController _contactoTelefonoController = TextEditingController();
+  late TextEditingController _contactoCorreoController = TextEditingController();
+  late TextEditingController _contactoParentescoController = TextEditingController();
 
   bool _showClearIconFristName = false;
-  bool _showClearIconNumDoc = false;
   bool _showClearIconSecondName = false;
   bool _showClearIconFristLastname = false;
   bool _showClearIconSecondLastname = false;
@@ -42,6 +45,10 @@ class _EditUserFormState extends State<EditUserForm> {
   bool _showClearIconDate = false;
   bool _necesitaParqueaderoBool = false;
   bool _quiereMentorBool = false;
+  bool _showClearIconNombreContacto = false;
+  bool _showClearIconTelefonoContacto = false;
+  bool _showClearIconCorreoContacto = false;
+  bool _showClearIconParentescoo = false;
 
   Map<String, Object> registroFrom = Map();
   final HttpService httpService = HttpService();
@@ -82,6 +89,34 @@ class _EditUserFormState extends State<EditUserForm> {
       setState(() {
         _fechaNacimientoController.clear();
         _showClearIconDate = false;
+      });
+  }
+
+  void _clearTextNombreContacto() {
+      setState(() {
+        _contactoNombreController.clear();
+        _showClearIconNombreContacto = false;
+      });
+  }
+
+  void _clearTextTelefonoContacto() {
+      setState(() {
+        _contactoTelefonoController.clear();
+        _showClearIconTelefonoContacto = false;
+      });
+  }
+
+  void _clearTextCorreoContacto() {
+      setState(() {
+        _contactoCorreoController.clear();
+        _showClearIconCorreoContacto = false;
+      });
+  }
+
+  void _clearTextParentesco() {
+      setState(() {
+        _contactoParentescoController.clear();
+        _showClearIconParentescoo = false;
       });
   }
 
@@ -172,6 +207,11 @@ class _EditUserFormState extends State<EditUserForm> {
     _fechaNacimientoController = TextEditingController(text: widget.userData.fechaNacimientoString);
     _mentorController = TextEditingController(text: widget.userData.abreviaturaMentor ?? 'No desea');
     _quiereMentorController = TextEditingController(text: widget.userData.tieneMentor == true ? 'Sí': 'No');
+    _contactoNombreController = TextEditingController(text: widget.userData.contacto?.nombreContacto ?? '');
+    _contactoTelefonoController = TextEditingController(text: widget.userData.contacto?.telefonoContacto ?? '');
+    _contactoCorreoController = TextEditingController(text: widget.userData.contacto?.correoContacto ?? '');
+    _contactoParentescoController = TextEditingController(text: widget.userData.contacto?.parentesco ?? '');
+
 
     _selectedValueGender = widget.userData.genero;
     _selectedValueMentor = widget.userData.abreviaturaMentor ?? 'No desea' ;
@@ -207,6 +247,26 @@ class _EditUserFormState extends State<EditUserForm> {
     _fechaNacimientoController.addListener(() {
       setState(() {
         _showClearIconDate = _fechaNacimientoController.text.isNotEmpty;
+      });
+    });
+    _contactoNombreController.addListener(() {
+      setState(() {
+        _showClearIconNombreContacto = _contactoNombreController.text.isNotEmpty;
+      });
+    });
+    _contactoTelefonoController.addListener(() {
+      setState(() {
+        _showClearIconTelefonoContacto = _contactoTelefonoController.text.isNotEmpty;
+      });
+    });
+    _contactoCorreoController.addListener(() {
+      setState(() {
+        _showClearIconCorreoContacto = _contactoCorreoController.text.isNotEmpty;
+      });
+    });
+    _contactoParentescoController.addListener(() {
+      setState(() {
+        _showClearIconParentescoo = _contactoParentescoController.text.isNotEmpty;
       });
     });
 
@@ -255,6 +315,14 @@ class _EditUserFormState extends State<EditUserForm> {
       registroFrom.addEntries({'tieneMentor': _quiereMentorBool}.entries);
       registroFrom.addEntries({'abreviaturaMentor': _mentorController.text}.entries);
       registroFrom.addEntries({'oldCelular': _oldCelularController.text}.entries);
+       registroFrom.addEntries({
+        'contacto': {
+          'nombreContacto': _contactoNombreController.text,
+          'telefonoContacto': _contactoTelefonoController.text,
+          'correoContacto': _contactoCorreoController.text,
+          'parentesco': _contactoParentescoController.text,
+        }
+      }.entries);
       
       final Response response = await httpService.editarJoven(registroFrom);
       if(response.exitoso){
@@ -827,6 +895,118 @@ class _EditUserFormState extends State<EditUserForm> {
                         ),
                     ],
                   ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
+                  child: Text("Datos de Contacto", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(80, 20, 80, 30),
+                  child: TextFormField(
+                                validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Ingresa un valor';
+                                        }
+                                        return null;
+                                },
+
+                                controller: _contactoNombreController,
+                                decoration: InputDecoration(
+                                  enabledBorder: const UnderlineInputBorder(
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                  ),
+                                  labelText: 'Nombre contacto',
+                                  hintText: "SNombre contacto*",
+                                  suffixIcon: _showClearIconNombreContacto
+                                      ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: _clearTextNombreContacto,
+                                        )
+                                      : null,
+                                ),
+                              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(80, 20, 80, 30),
+                  child: TextFormField(
+                                validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Ingresa un valor';
+                                        }
+                                        return null;
+                                },
+
+                                controller: _contactoTelefonoController,
+                                decoration: InputDecoration(
+                                  enabledBorder: const UnderlineInputBorder(
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                  ),
+                                  labelText: 'Teléfono contacto',
+                                  hintText: "Teléfono contacto*",
+                                  suffixIcon: _showClearIconTelefonoContacto
+                                      ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: _clearTextTelefonoContacto,
+                                        )
+                                      : null,
+                                ),
+                              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(80, 20, 80, 30),
+                  child: TextFormField(
+                                validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Ingresa un valor';
+                                        }
+                                        return null;
+                                },
+
+                                controller: _contactoCorreoController,
+                                decoration: InputDecoration(
+                                  enabledBorder: const UnderlineInputBorder(
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                  ),
+                                  labelText: 'Correo contacto',
+                                  hintText: "Correo contacto*",
+                                  suffixIcon: _showClearIconCorreoContacto
+                                      ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: _clearTextCorreoContacto,
+                                        )
+                                      : null,
+                                ),
+                              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(80, 20, 80, 30),
+                  child: TextFormField(
+                                validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Ingresa un valor';
+                                        }
+                                        return null;
+                                },
+
+                                controller: _contactoParentescoController,
+                                decoration: InputDecoration(
+                                  enabledBorder: const UnderlineInputBorder(
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                  ),
+                                  labelText: 'Parentesco',
+                                  hintText: "Parentesco*",
+                                  suffixIcon: _showClearIconParentescoo
+                                      ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: _clearTextParentesco,
+                                        )
+                                      : null,
+                                ),
+                              ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(80, 20, 80, 30),
