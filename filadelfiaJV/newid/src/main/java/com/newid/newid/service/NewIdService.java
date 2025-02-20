@@ -15,17 +15,23 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.newid.newid.dto.BuscarDTO;
+import com.newid.newid.dto.EmailRequestDTO;
 import com.newid.newid.dto.IngresoDTO;
 import com.newid.newid.dto.NewIdAsistenciaDTO;
 import com.newid.newid.dto.NewidJovenDTO;
 import com.newid.newid.dto.NewidPadreDTO;
+import com.newid.newid.dto.PassesDTO;
 import com.newid.newid.mapper.NewIdContactoMapper;
 import com.newid.newid.mapper.NewIdJovenMapper;
+import com.newid.newid.mapper.NewIdJovenPassesMapper;
 import com.newid.newid.mapper.NewIdPadreMapper;
 import com.newid.newid.models.NewIdAsistencia;
 import com.newid.newid.models.NewIdAsistenciaPray;
 import com.newid.newid.models.NewIdContacto;
+import com.newid.newid.models.NewIdEmails;
 import com.newid.newid.models.NewIdGrupoEdad;
+import com.newid.newid.models.NewIdJovenPasses;
+import com.newid.newid.models.NewIdPasse;
 import com.newid.newid.models.NewIdSeguimiento;
 import com.newid.newid.models.NewIdSeguridad;
 import com.newid.newid.models.NewidJoven;
@@ -34,12 +40,21 @@ import com.newid.newid.models.NewidPadre;
 import com.newid.newid.repository.NewIdAsistenciaPrayRepository;
 import com.newid.newid.repository.NewIdAsistenciaRepository;
 import com.newid.newid.repository.NewIdContactoRepository;
+import com.newid.newid.repository.NewIdEmailsRepository;
 import com.newid.newid.repository.NewIdGrupoEdadRepository;
+import com.newid.newid.repository.NewIdJovenPassesRepository;
 import com.newid.newid.repository.NewIdJovenRepository;
 import com.newid.newid.repository.NewIdMentorRepository;
 import com.newid.newid.repository.NewIdPadreRepository;
+import com.newid.newid.repository.NewIdPassesRepository;
 import com.newid.newid.repository.NewIdSeguimientoRepository;
 import com.newid.newid.repository.NewIdSeguiridadRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
 
 
 @Service
@@ -80,6 +95,21 @@ public class NewIdService {
 
     @Autowired
     NewIdContactoMapper newIdContactoMapper;
+
+    @Autowired
+    NewIdJovenPassesMapper newIdJovenPassesMapper;
+
+    @Autowired
+    NewIdJovenPassesRepository newIdJovenPassesRepository;
+
+    @Autowired
+    NewIdPassesRepository newIdPassesRepository;
+
+    @Autowired
+    JavaMailSender mailSender;
+
+    @Autowired
+    NewIdEmailsRepository newIdEmailsRepository;
 
     public Map<String, Object> getJovenes() {
         Map<String, Object> answer = new TreeMap<>();
@@ -383,6 +413,44 @@ public class NewIdService {
             answer.put("exitoso", false);
             answer.put("data", "El joven no existe en la base de datos");
         }
+        return answer;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public Map<String, Object> registrarPasses(PassesDTO passesDTO) {
+        NewIdPasse newIdPasse = newIdPassesRepository.findById(passesDTO.getIdPasse()).get();
+        NewidJoven newIdJoven = newIdJovenRepository.findById(passesDTO.getIdJoven()).get();
+        NewIdJovenPasses newIdJovenPasses = new NewIdJovenPasses();
+        newIdJovenPasses.setFecha(new Date(System.currentTimeMillis()));
+        newIdJovenPasses.setJoven(newIdJoven);
+        newIdJovenPasses.setPasse(newIdPasse);
+        newIdJovenPassesRepository.save(newIdJovenPasses);
+        Map<String, Object> answer = new TreeMap<>();
+        answer.put("exitoso", true);
+        answer.put("data", "Passe registrado correctamente");
+        return answer;
+    }
+
+    public Map<String, Object> enviarEmailSalida(EmailRequestDTO emailRequest) throws MessagingException {
+
+        Map<String, Object> answer = new TreeMap<>();
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        NewIdEmails newIdEmails = newIdEmailsRepository.findById(1L).get();
+        
+    
+
+        helper.setTo(emailRequest.getTo().toArray(new String[0]));
+        helper.setSubject(newIdEmails.getAsunto());
+        helper.setText(newIdEmails.getCuerpo(), true); // 'true' enables HTML content
+        helper.setFrom("Prueba email Filadelfia <lau.ceballos00@gmail.com>");
+
+
+        mailSender.send(message);
+        answer.put("exitoso", true);
+        answer.put("data", "Email enviado correctamente");
         return answer;
     }
 

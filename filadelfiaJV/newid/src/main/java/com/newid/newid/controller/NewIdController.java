@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.newid.newid.dto.BuscarDTO;
+import com.newid.newid.dto.EmailRequestDTO;
 import com.newid.newid.dto.IngresoDTO;
 import com.newid.newid.dto.NewidJovenDTO;
 import com.newid.newid.dto.NewidPadreDTO;
+import com.newid.newid.dto.PassesDTO;
 import com.newid.newid.service.NewIdService;
 
 
@@ -166,6 +168,36 @@ public class NewIdController {
         Map<String, Object> answer = new TreeMap<>();
         try {
             answer = newIdService.buscarPadre(telefono);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
+    @PostMapping("/registrarPasses")
+    public ResponseEntity<?> registrarPasses(@RequestBody PassesDTO passesDTO){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.registrarPasses(passesDTO);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
+    @PostMapping("/enviarEmailSalida")
+    public ResponseEntity<?> enviarEmailSalida(@RequestBody EmailRequestDTO emailRequest){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.enviarEmailSalida(emailRequest);
         } catch (Exception e) {
             answer.put("exitoso", false);
             answer.put("error", "Se ha presentado un error en el servicio");
