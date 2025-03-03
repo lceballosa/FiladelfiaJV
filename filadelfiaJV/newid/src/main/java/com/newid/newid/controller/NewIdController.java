@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.newid.newid.dto.BuscarDTO;
 import com.newid.newid.dto.EmailRequestDTO;
 import com.newid.newid.dto.IngresoDTO;
+import com.newid.newid.dto.NewIdActividadDelDiaDTO;
 import com.newid.newid.dto.NewidJovenDTO;
 import com.newid.newid.dto.NewidPadreDTO;
 import com.newid.newid.dto.PassesDTO;
@@ -206,6 +207,59 @@ public class NewIdController {
         return ResponseEntity.ok().body(answer);
 
     }
+    
+
+    //Seccion Admin
+
+    //cambiar contrasenia
+    @PostMapping("/admin/cambiarContrasenia")
+    public ResponseEntity<?> cambiarContrasenia(@RequestBody IngresoDTO ingresoDTO){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.cambiarContrasenia(ingresoDTO);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
+    //Configurar actividad del día (Tipo de actividad, passes a evaluar y valor de los passes)
+
+    @PostMapping("/admin/actividadDelDia")
+    public ResponseEntity<?> actividadDelDia(@RequestBody NewIdActividadDelDiaDTO newIdActividadDelDiaDTO){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.actividadDelDia(newIdActividadDelDiaDTO);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+
+    //Agregar actividad
+    //Editar actividad
+    //Eliminar actividad
+
+    //Passes
+    //Consultar redimibles
+    //Editar redimibles
+    //Eliminar redimibles
+
+
+    //seccion joven
+
+    //Ver passes
+    //Redimir passes
+
+
 
     
     

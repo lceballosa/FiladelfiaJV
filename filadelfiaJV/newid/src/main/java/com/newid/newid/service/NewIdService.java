@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.newid.newid.dto.BuscarDTO;
 import com.newid.newid.dto.EmailRequestDTO;
 import com.newid.newid.dto.IngresoDTO;
+import com.newid.newid.dto.NewIdActividadDelDiaDTO;
 import com.newid.newid.dto.NewIdAsistenciaDTO;
+import com.newid.newid.dto.NewIdPassesDiaDTO;
 import com.newid.newid.dto.NewidJovenDTO;
 import com.newid.newid.dto.NewidPadreDTO;
 import com.newid.newid.dto.PassesDTO;
@@ -25,6 +27,8 @@ import com.newid.newid.mapper.NewIdContactoMapper;
 import com.newid.newid.mapper.NewIdJovenMapper;
 import com.newid.newid.mapper.NewIdJovenPassesMapper;
 import com.newid.newid.mapper.NewIdPadreMapper;
+import com.newid.newid.mapper.NewIdPadreMapperImpl;
+import com.newid.newid.models.NewIdActividadDelDia;
 import com.newid.newid.models.NewIdAsistencia;
 import com.newid.newid.models.NewIdAsistenciaPray;
 import com.newid.newid.models.NewIdContacto;
@@ -32,11 +36,14 @@ import com.newid.newid.models.NewIdEmails;
 import com.newid.newid.models.NewIdGrupoEdad;
 import com.newid.newid.models.NewIdJovenPasses;
 import com.newid.newid.models.NewIdPasse;
+import com.newid.newid.models.NewIdPassesDia;
 import com.newid.newid.models.NewIdSeguimiento;
 import com.newid.newid.models.NewIdSeguridad;
+import com.newid.newid.models.NewIdTipoActividades;
 import com.newid.newid.models.NewidJoven;
 import com.newid.newid.models.NewidMentor;
 import com.newid.newid.models.NewidPadre;
+import com.newid.newid.repository.NewIdActividadDelDiaRepository;
 import com.newid.newid.repository.NewIdAsistenciaPrayRepository;
 import com.newid.newid.repository.NewIdAsistenciaRepository;
 import com.newid.newid.repository.NewIdContactoRepository;
@@ -46,9 +53,12 @@ import com.newid.newid.repository.NewIdJovenPassesRepository;
 import com.newid.newid.repository.NewIdJovenRepository;
 import com.newid.newid.repository.NewIdMentorRepository;
 import com.newid.newid.repository.NewIdPadreRepository;
+import com.newid.newid.repository.NewIdPassesDiaRepository;
 import com.newid.newid.repository.NewIdPassesRepository;
 import com.newid.newid.repository.NewIdSeguimientoRepository;
 import com.newid.newid.repository.NewIdSeguiridadRepository;
+import com.newid.newid.repository.NewIdTipoActividadesRepository;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +120,15 @@ public class NewIdService {
 
     @Autowired
     NewIdEmailsRepository newIdEmailsRepository;
+
+    @Autowired
+    NewIdActividadDelDiaRepository newIdActividadDelDiaRepository;
+
+    @Autowired
+    NewIdPassesDiaRepository newIdPassesDiaRepository;
+
+    @Autowired
+    NewIdTipoActividadesRepository newIdTipoActividadesRepository;
 
     public Map<String, Object> getJovenes() {
         Map<String, Object> answer = new TreeMap<>();
@@ -451,6 +470,44 @@ public class NewIdService {
         mailSender.send(message);
         answer.put("exitoso", true);
         answer.put("data", "Email enviado correctamente");
+        return answer;
+    }
+
+    public Map<String, Object> cambiarContrasenia(IngresoDTO ingresoDTO) {
+        Map<String, Object> answer = new TreeMap<>();
+
+        if(newIdSeguiridadRepository.findByContrasenia(ingresoDTO.getPassword()) != null){
+            NewIdSeguridad newIdSeguridad = newIdSeguiridadRepository.findByContrasenia(ingresoDTO.getPassword());
+            newIdSeguridad.setContrasenia(ingresoDTO.getNewPassword());
+            newIdSeguiridadRepository.save(newIdSeguridad);
+            answer.put("exitoso", true);
+            answer.put("data", "La contraseña ha sido cambiada");
+        }else{
+            answer.put("exitoso", false);
+            answer.put("data", "La contraseña actual no es correcta");
+        }
+        return answer;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public Map<String, Object> actividadDelDia(NewIdActividadDelDiaDTO newIdActividadDelDia) {
+        Map<String, Object> answer = new TreeMap<>();
+
+        for (NewIdPassesDiaDTO newIdPassesDiaDTO : newIdActividadDelDia.getNewidPassesDiaList()) {
+            NewIdPassesDia newIdPassesDia = new NewIdPassesDia();
+            newIdPassesDia.setPuntos(newIdPassesDiaDTO.getPuntos());
+            newIdPassesDia.setPasse(newIdPassesRepository.findById(newIdPassesDiaDTO.getIdPasse()).get());
+        }
+
+        NewIdActividadDelDia newIdActividadDelDiaModel = new NewIdActividadDelDia();
+        newIdActividadDelDiaModel.setFecha(new Date(System.currentTimeMillis()));
+        newIdActividadDelDiaModel.setNewIdTipoActividades(newIdTipoActividadesRepository.findById(newIdActividadDelDia.getIdNewIdTipoActividades()).get());
+        //newIdActividadDelDiaModel.setNewIdPassesDia(newIdActividadDelDia.getIdNewIdPassesDia());
+
+        newIdActividadDelDiaModel = newIdActividadDelDiaRepository.save(newIdActividadDelDiaModel);
+
+
+
         return answer;
     }
 
