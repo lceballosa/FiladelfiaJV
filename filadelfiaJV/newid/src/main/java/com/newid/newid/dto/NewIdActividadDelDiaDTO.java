@@ -6,9 +6,19 @@ public class NewIdActividadDelDiaDTO {
 
     private Long id;
     private Long idNewIdTipoActividades;
+    private String actividadDia;
     private Date fecha;
     private List<NewIdPassesDiaDTO> newidPassesDiaList;
 
+
+
+    public String getActividadDia() {
+        return this.actividadDia;
+    }
+
+    public void setActividadDia(String actividadDia) {
+        this.actividadDia = actividadDia;
+    }
 
     public Long getId() {
         return this.id;

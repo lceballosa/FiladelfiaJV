@@ -28,6 +28,7 @@ import com.newid.newid.mapper.NewIdJovenMapper;
 import com.newid.newid.mapper.NewIdJovenPassesMapper;
 import com.newid.newid.mapper.NewIdPadreMapper;
 import com.newid.newid.mapper.NewIdPadreMapperImpl;
+import com.newid.newid.mapper.NewIdPassesDiaMapper;
 import com.newid.newid.models.NewIdActividadDelDia;
 import com.newid.newid.models.NewIdAsistencia;
 import com.newid.newid.models.NewIdAsistenciaPray;
@@ -129,6 +130,9 @@ public class NewIdService {
 
     @Autowired
     NewIdTipoActividadesRepository newIdTipoActividadesRepository;
+
+    @Autowired
+    NewIdPassesDiaMapper newIdPassesDiaMapper;
 
     public Map<String, Object> getJovenes() {
         Map<String, Object> answer = new TreeMap<>();
@@ -493,22 +497,48 @@ public class NewIdService {
     public Map<String, Object> actividadDelDia(NewIdActividadDelDiaDTO newIdActividadDelDia) {
         Map<String, Object> answer = new TreeMap<>();
 
+        NewIdActividadDelDia newIdActividadDelDiaModel = new NewIdActividadDelDia();
+        newIdActividadDelDiaModel.setFecha(new Date(System.currentTimeMillis()));
+        newIdActividadDelDiaModel.setNewIdTipoActividades(newIdTipoActividadesRepository.findById(newIdActividadDelDia.getIdNewIdTipoActividades()).get());
+
+        newIdActividadDelDiaModel = newIdActividadDelDiaRepository.save(newIdActividadDelDiaModel);
+
         for (NewIdPassesDiaDTO newIdPassesDiaDTO : newIdActividadDelDia.getNewidPassesDiaList()) {
             NewIdPassesDia newIdPassesDia = new NewIdPassesDia();
             newIdPassesDia.setPuntos(newIdPassesDiaDTO.getPuntos());
             newIdPassesDia.setPasse(newIdPassesRepository.findById(newIdPassesDiaDTO.getIdPasse()).get());
+            newIdPassesDia.setActividadDelDia(newIdActividadDelDiaModel);
+            newIdPassesDia = newIdPassesDiaRepository.save(newIdPassesDia);
+
         }
 
-        NewIdActividadDelDia newIdActividadDelDiaModel = new NewIdActividadDelDia();
-        newIdActividadDelDiaModel.setFecha(new Date(System.currentTimeMillis()));
-        newIdActividadDelDiaModel.setNewIdTipoActividades(newIdTipoActividadesRepository.findById(newIdActividadDelDia.getIdNewIdTipoActividades()).get());
-        //newIdActividadDelDiaModel.setNewIdPassesDia(newIdActividadDelDia.getIdNewIdPassesDia());
-
-        newIdActividadDelDiaModel = newIdActividadDelDiaRepository.save(newIdActividadDelDiaModel);
+        
+        answer.put("exitoso", true);
+        answer.put("data", "Actividad del día registrada");
 
 
 
         return answer;
+    }
+
+    public Map<String, Object> verActividadDelDia() {
+
+        NewIdActividadDelDiaDTO newIdActividadDelDiaDTO = new NewIdActividadDelDiaDTO();
+        Map<String, Object> answer = new TreeMap<>();
+        NewIdActividadDelDia newIdActividadDelDiaModel = new NewIdActividadDelDia();
+        newIdActividadDelDiaModel = newIdActividadDelDiaRepository.findTopByOrderByIdDesc();
+
+        newIdActividadDelDiaDTO.setActividadDia(newIdActividadDelDiaModel.getNewIdTipoActividades().getNombre());
+
+        List<NewIdPassesDiaDTO> newIdPassesDiasDTO = newIdPassesDiaMapper.newIdPassesDiasToNewIDPassesDiaDTOs(newIdPassesDiaRepository.findByActividadDelDia(newIdActividadDelDiaModel)); 
+
+        newIdActividadDelDiaDTO.setNewidPassesDiaList(newIdPassesDiasDTO);
+
+
+        answer.put("exitoso", true);
+        answer.put("data", newIdActividadDelDiaDTO);
+        return answer;
+        // TODO Auto-generated method stub
     }
 
     

@@ -9,10 +9,21 @@ public class NewIdPassesDiaDTO {
 
     private Long idPasse;
 
+    private String passe;
+
     private Long puntos;
 
     private Long idActividadDelDia;
 
+
+
+    public String getPasse() {
+        return this.passe;
+    }
+
+    public void setPasse(String passe) {
+        this.passe = passe;
+    }
 
     public Long getIdPasse() {
         return this.idPasse;

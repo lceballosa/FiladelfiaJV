@@ -244,6 +244,20 @@ public class NewIdController {
 
     }
 
+    @GetMapping("/admin/verActividad")
+    public ResponseEntity<?> verActividadDelDia(){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.verActividadDelDia();
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
     //Agregar actividad
     //Editar actividad
     //Eliminar actividad
