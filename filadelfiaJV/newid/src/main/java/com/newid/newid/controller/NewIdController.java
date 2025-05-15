@@ -178,21 +178,6 @@ public class NewIdController {
 
     }
 
-    @PostMapping("/registrarPasses")
-    public ResponseEntity<?> registrarPasses(@RequestBody PassesDTO passesDTO){
-
-        Map<String, Object> answer = new TreeMap<>();
-        try {
-            answer = newIdService.registrarPasses(passesDTO);
-        } catch (Exception e) {
-            answer.put("exitoso", false);
-            answer.put("error", "Se ha presentado un error en el servicio");
-            answer.put("e",e);
-        }
-        return ResponseEntity.ok().body(answer);
-
-    }
-
     @PostMapping("/enviarEmailSalida")
     public ResponseEntity<?> enviarEmailSalida(@RequestBody EmailRequestDTO emailRequest){
 
@@ -229,8 +214,8 @@ public class NewIdController {
 
     //Configurar actividad del día (Tipo de actividad, passes a evaluar y valor de los passes)
 
-    @PostMapping("/admin/actividadDelDia")
-    public ResponseEntity<?> actividadDelDia(@RequestBody NewIdActividadDelDiaDTO newIdActividadDelDiaDTO){
+    @PostMapping("/admin/crearActividadDelDia")
+    public ResponseEntity<?> crearActividadDelDia(@RequestBody NewIdActividadDelDiaDTO newIdActividadDelDiaDTO){
 
         Map<String, Object> answer = new TreeMap<>();
         try {
@@ -250,6 +235,34 @@ public class NewIdController {
         Map<String, Object> answer = new TreeMap<>();
         try {
             answer = newIdService.verActividadDelDia();
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+    @PostMapping("/admin/registrarPasse")
+    public ResponseEntity<?> registrarPasse(@RequestBody NewIdActividadDelDiaDTO newIdActividadDelDiaDTO){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.registrarPasse(newIdActividadDelDiaDTO);
+        } catch (Exception e) {
+            answer.put("exitoso", false);
+            answer.put("error", "Se ha presentado un error en el servicio");
+            answer.put("e",e);
+        }
+        return ResponseEntity.ok().body(answer);
+
+    }
+    @GetMapping("/admin/consultarPasseJoven/{telefono}")
+    public ResponseEntity<?> consultarPasseJoven(@PathVariable ("telefono") String telefono){
+
+        Map<String, Object> answer = new TreeMap<>();
+        try {
+            answer = newIdService.consultarPasseJoven(telefono);
         } catch (Exception e) {
             answer.put("exitoso", false);
             answer.put("error", "Se ha presentado un error en el servicio");

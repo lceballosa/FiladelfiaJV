@@ -9,7 +9,17 @@ public class NewIdActividadDelDiaDTO {
     private String actividadDia;
     private Date fecha;
     private List<NewIdPassesDiaDTO> newidPassesDiaList;
+    private String idJoven;
 
+
+
+    public String getIdJoven() {
+        return this.idJoven;
+    }
+
+    public void setIdJoven(String idJoven) {
+        this.idJoven = idJoven;
+    }
 
 
     public String getActividadDia() {

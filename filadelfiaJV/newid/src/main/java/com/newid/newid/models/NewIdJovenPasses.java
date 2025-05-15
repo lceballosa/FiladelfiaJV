@@ -20,8 +20,8 @@ public class NewIdJovenPasses {
     private NewidJoven joven;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_passe", nullable = false)
-    private NewIdPasse passe;
+    @JoinColumn(name = "id_passe_dia", nullable = false)
+    private NewIdPassesDia passe;
 
     @Column(name = "fecha", nullable = false)
     private Date fecha;
@@ -43,14 +43,15 @@ public class NewIdJovenPasses {
         this.joven = joven;
     }
 
-    public NewIdPasse getPasse() {
+
+    public NewIdPassesDia getPasse() {
         return this.passe;
     }
 
-    public void setPasse(NewIdPasse passe) {
+    public void setPasse(NewIdPassesDia passe) {
         this.passe = passe;
     }
-
+    
 
     public Date getFecha() {
         return this.fecha;

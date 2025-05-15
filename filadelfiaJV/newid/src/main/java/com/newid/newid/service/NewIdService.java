@@ -439,21 +439,6 @@ public class NewIdService {
         return answer;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-    public Map<String, Object> registrarPasses(PassesDTO passesDTO) {
-        NewIdPasse newIdPasse = newIdPassesRepository.findById(passesDTO.getIdPasse()).get();
-        NewidJoven newIdJoven = newIdJovenRepository.findById(passesDTO.getIdJoven()).get();
-        NewIdJovenPasses newIdJovenPasses = new NewIdJovenPasses();
-        newIdJovenPasses.setFecha(new Date(System.currentTimeMillis()));
-        newIdJovenPasses.setJoven(newIdJoven);
-        newIdJovenPasses.setPasse(newIdPasse);
-        newIdJovenPassesRepository.save(newIdJovenPasses);
-        Map<String, Object> answer = new TreeMap<>();
-        answer.put("exitoso", true);
-        answer.put("data", "Passe registrado correctamente");
-        return answer;
-    }
-
     public Map<String, Object> enviarEmailSalida(EmailRequestDTO emailRequest) throws MessagingException {
 
         Map<String, Object> answer = new TreeMap<>();
@@ -521,6 +506,7 @@ public class NewIdService {
         return answer;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
     public Map<String, Object> verActividadDelDia() {
 
         NewIdActividadDelDiaDTO newIdActividadDelDiaDTO = new NewIdActividadDelDiaDTO();
@@ -538,7 +524,49 @@ public class NewIdService {
         answer.put("exitoso", true);
         answer.put("data", newIdActividadDelDiaDTO);
         return answer;
-        // TODO Auto-generated method stub
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+    public Map<String, Object> registrarPasse(NewIdActividadDelDiaDTO newIdActividadDelDiaDTO) {
+        Map<String, Object> answer = new TreeMap<>();
+
+        //TODO: check if the current activity matches with the just created one
+        for (NewIdPassesDiaDTO passesDiaJoven : newIdActividadDelDiaDTO.getNewidPassesDiaList()){
+
+            NewIdJovenPasses newIdJovenPasses = new NewIdJovenPasses();
+            newIdJovenPasses.setPasse(newIdPassesDiaRepository.findById(passesDiaJoven.getId()).get());
+            newIdJovenPasses.setJoven(newIdJovenRepository.findById(newIdActividadDelDiaDTO.getIdJoven()).get());
+            newIdJovenPasses.setFecha(new Date(System.currentTimeMillis()));
+
+            newIdJovenPassesRepository.save(newIdJovenPasses);
+
+        }
+        answer.put("exitoso", true);
+        answer.put("data", "Passes registrados correctamente");
+        return answer;
+        
+    }
+
+    public Map<String, Object> consultarPasseJoven(String telefono) {
+        Map<String, Object> answer = new TreeMap<>();
+        
+        if (newIdJovenRepository.findById(telefono).isPresent()) {
+            NewidJoven newidJoven = newIdJovenRepository.findById(telefono).get();
+            List<NewIdJovenPasses> jovenPassesList = newIdJovenPassesRepository.findAllByJoven(newidJoven);
+    
+            // Calculate the sum of puntos
+            int totalPuntos = jovenPassesList.stream()
+                .mapToInt(jp -> jp.getPasse().getPuntos().intValue())
+                .sum();
+    
+            answer.put("exitoso", true);
+            answer.put("data", totalPuntos);
+        } else {
+            answer.put("exitoso", false);
+            answer.put("data", "El joven no existe en la base de datos");
+        }
+    
+        return answer;
     }
 
     
