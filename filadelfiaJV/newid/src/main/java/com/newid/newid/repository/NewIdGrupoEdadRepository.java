@@ -7,7 +7,8 @@ import com.newid.newid.models.NewIdGrupoEdad;
 
 public interface NewIdGrupoEdadRepository extends JpaRepository<NewIdGrupoEdad, Long>{
 
-    @Query(value= "select * from newid_grupoedad where :anios between valor_minimo and valor_maximo", nativeQuery=true)
+    @Query("SELECT g FROM NewIdGrupoEdad g WHERE :anios BETWEEN g.valorMinimo AND g.valorMaximo")
     NewIdGrupoEdad findGroup(int anios);
     
 }
+
