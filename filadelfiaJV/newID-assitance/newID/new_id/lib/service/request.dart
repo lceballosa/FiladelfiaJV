@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart'as http;
+import 'package:new_id/models/actividadDelDia.dart';
 import 'package:new_id/models/ingreso.dart';
 import 'package:new_id/models/jovenData.dart';
 import 'package:new_id/models/response.dart';
@@ -18,6 +19,17 @@ class HttpService {
       return ans;
     }
     return Ingreso(exitoso: false);
+  }
+
+  Future<ResponseActividadDia> cargarActividadDia() async {
+    
+    var url = Uri.parse(baseURL+'/admin/verActividad');
+    http.Response response = await http.get(url, headers: httpHeaders);
+    if (response.statusCode == 200) {
+      ResponseActividadDia ans = ResponseActividadDia.fromJson(json.decode(response.body));
+      return ans;
+    }
+    return ResponseActividadDia(exitoso: false);
   }
 
   Future<Response> registroAsistencia(String telefono) async {
@@ -116,5 +128,17 @@ class HttpService {
     }
 
   return null;
+  }
+
+  Future<Response> registroPasse(Map<String, Object> registro) async {
+    
+    var url = Uri.parse(baseURL+'/admin/registrarPasse');
+    var body  = json.encode(registro);
+    http.Response response = await http.post(url, headers: httpHeaders, body: body);
+    if (response.statusCode == 200) {
+      Response ans = Response.fromJson(json.decode(response.body));
+      return ans;
+    }
+    return Response(exitoso: false, data:"Error en el servicio");
   }
 }
